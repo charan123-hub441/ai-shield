@@ -132,3 +132,4 @@ UPDATE users SET role = 'admin' WHERE email = 'your@email.com';
 ```
 
 Or use the FastAPI shell to do it programmatically.
+"# point-of-view" 
