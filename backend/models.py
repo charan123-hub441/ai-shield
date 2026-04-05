@@ -26,6 +26,30 @@ class User(Base):
     messages = relationship("Message", back_populates="user")
     reports = relationship("Report", back_populates="reporter")
     flagged = relationship("FlaggedMessage", back_populates="flagged_by_user")
+    
+    # Follower relationships
+    followers = relationship(
+        "UserFollow",
+        foreign_keys="[UserFollow.followed_id]",
+        backref="followed_user",
+        cascade="all, delete-orphan"
+    )
+    following = relationship(
+        "UserFollow",
+        foreign_keys="[UserFollow.follower_id]",
+        backref="following_user",
+        cascade="all, delete-orphan"
+    )
+
+
+class UserFollow(Base):
+    __tablename__ = "user_follows"
+
+    id = Column(Integer, primary_key=True, index=True)
+    follower_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
+    followed_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
+    status = Column(String, default="pending")  # pending | accepted
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 
 class Message(Base):

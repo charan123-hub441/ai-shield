@@ -205,12 +205,39 @@ class ConversationCreate(BaseModel):
     username: str       # username of the person to chat with
 
 
-# ─── Users listing ───────────────────────────────────────────────────────────
+# ─── Users listing & Social ───────────────────────────────────────────────────
 
 class UserBasic(BaseModel):
     id: int
     username: str
     profile_pic_url: Optional[str] = None
+    model_config = {"from_attributes": True}
+
+class UserSearchResponse(BaseModel):
+    id: int
+    username: str
+    full_name: Optional[str] = None
+    profile_pic_url: Optional[str] = None
+    model_config = {"from_attributes": True}
+
+class UserPublicProfile(BaseModel):
+    id: int
+    username: str
+    full_name: Optional[str] = None
+    bio: Optional[str] = None
+    profile_pic_url: Optional[str] = None
+    followers_count: int = 0
+    following_count: int = 0
+    is_following: bool = False
+    follow_status: str = "none"
+    model_config = {"from_attributes": True}
+
+class FollowRequestResponse(BaseModel):
+    id: int
+    follower_id: int
+    follower_username: str
+    follower_profile_pic_url: Optional[str] = None
+    created_at: datetime
     model_config = {"from_attributes": True}
 
 
