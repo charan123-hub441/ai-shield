@@ -46,9 +46,10 @@ app.include_router(calling.router)
 app.include_router(users.router)
 app.include_router(reels.router)
 
-# Serve uploaded media files
+# Serve uploaded media files - use DATA_DIR env var for persistent volume in production
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
+DATA_DIR = os.environ.get("DATA_DIR", BASE_DIR)
+UPLOAD_DIR = os.path.join(DATA_DIR, "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
