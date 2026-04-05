@@ -13,6 +13,8 @@ import Call from './pages/Call';
 import Moderation from './pages/Moderation';
 import Reports from './pages/Reports';
 import Profile from './pages/Profile';
+import Reels from './pages/Reels';
+import Settings from './pages/Settings';
 
 function AppLayout({ theme, toggleTheme }) {
   return (
@@ -22,12 +24,14 @@ function AppLayout({ theme, toggleTheme }) {
         <Routes>
           <Route path="/dashboard"  element={<Dashboard />} />
           <Route path="/feed"       element={<Feed />} />
+          <Route path="/reels"      element={<Reels />} />
           <Route path="/analyzer"   element={<Analyzer />} />
           <Route path="/chat"       element={<Chat />} />
           <Route path="/call"       element={<Call />} />
           <Route path="/moderation" element={<Moderation />} />
           <Route path="/reports"    element={<Reports />} />
           <Route path="/profile"    element={<Profile />} />
+          <Route path="/settings"   element={<Settings />} />
           <Route path="*"           element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </main>

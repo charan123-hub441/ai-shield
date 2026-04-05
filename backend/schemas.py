@@ -9,6 +9,7 @@ class UserCreate(BaseModel):
     username: str
     email: EmailStr
     password: str
+    phone_number: Optional[str] = None
 
     @field_validator("password")
     @classmethod
@@ -164,6 +165,18 @@ class UserProfileUpdate(BaseModel):
     profile_pic_url: Optional[str] = None
 
 
+class UserPasswordUpdate(BaseModel):
+    current_password: str
+    new_password: str
+
+    @field_validator("new_password")
+    @classmethod
+    def password_strength(cls, v: str) -> str:
+        if len(v) < 6:
+            raise ValueError("Password must be at least 6 characters")
+        return v
+
+
 class CommentCreate(BaseModel):
     text: str
 
@@ -199,4 +212,38 @@ class UserBasic(BaseModel):
     username: str
     profile_pic_url: Optional[str] = None
     model_config = {"from_attributes": True}
+
+
+# ─── Reels ───────────────────────────────────────────────────────────────────
+
+class ReelCommentOut(BaseModel):
+    id: int
+    text: str
+    username: str
+    created_at: datetime
+    model_config = {"from_attributes": True}
+
+
+class ReelOut(BaseModel):
+    id: int
+    caption: str
+    video_url: str
+    thumbnail_url: Optional[str] = None
+    username: str
+    profile_pic_url: Optional[str] = None
+    view_count: int = 0
+    like_count: int = 0
+    liked_by_me: bool = False
+    comment_count: int = 0
+    comments: list[ReelCommentOut] = []
+    is_flagged: bool = False
+    flag_label: Optional[str] = None
+    flag_score: Optional[float] = None
+    flag_warning: Optional[str] = None
+    created_at: datetime
+    model_config = {"from_attributes": True}
+
+
+class ReelCommentCreate(BaseModel):
+    text: str
 

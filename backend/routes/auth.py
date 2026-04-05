@@ -20,6 +20,7 @@ def register(payload: schemas.UserCreate, db: Session = Depends(get_db)):
         username=payload.username,
         email=payload.email,
         hashed_password=hash_password(payload.password),
+        phone_number=payload.phone_number,
         role="user"
     )
     db.add(user)

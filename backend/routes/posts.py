@@ -150,6 +150,20 @@ def add_comment(
     post = db.query(models.Post).filter(models.Post.id == post_id).first()
     if not post:
         raise HTTPException(404, "Post not found")
+        
+    ai_result = classify_text(payload.text)
+    if ai_result["is_flagged"]:
+        current_user.warn_count += 1
+        db.commit()
+        
+        if current_user.warn_count >= 3:
+            current_user.is_banned = True
+            db.commit()
+            raise HTTPException(400, "ACCOUNT BANNED: You have repeatedly posted offensive content. Your account is now disabled.")
+            
+        remaining = 3 - current_user.warn_count
+        raise HTTPException(400, f"⚠️ WARNING: Your comment contains offensive or bullying words and was blocked. You have {remaining} strike(s) left before a permanent ban.")
+
     comment = models.PostComment(
         post_id=post_id,
         user_id=current_user.id,

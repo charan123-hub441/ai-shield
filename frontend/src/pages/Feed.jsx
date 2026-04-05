@@ -11,6 +11,7 @@ export default function Feed() {
   const [posting, setPosting] = useState(false);
   const [commentText, setCommentText] = useState({});
   const [postWarning, setPostWarning] = useState(null);
+  const [commentError, setCommentError] = useState(null);
   const fileRef = useRef();
 
   const loadPosts = () => {
@@ -64,9 +65,15 @@ export default function Feed() {
   const addComment = async (postId) => {
     const t = commentText[postId]?.trim();
     if (!t) return;
-    await API.post(`/posts/${postId}/comment`, { text: t });
-    setCommentText({ ...commentText, [postId]: '' });
-    loadPosts();
+    try {
+      await API.post(`/posts/${postId}/comment`, { text: t });
+      setCommentText({ ...commentText, [postId]: '' });
+      loadPosts();
+    } catch (err) {
+      if (err.response?.status === 400 && err.response.data?.detail) {
+        setCommentError(err.response.data.detail);
+      }
+    }
   };
 
   const deletePost = async (id) => {
@@ -76,8 +83,33 @@ export default function Feed() {
   };
 
   return (
-    <div style={{ flex: 1 }} className="animate-in">
+    <div className="animate-in" style={{ maxWidth: 680, margin: '0 auto' }}>
       <Navbar title="Social Feed" />
+
+      {/* Comment Error Modal */}
+      {commentError && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.6)', zIndex: 1000,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          backdropFilter: 'blur(5px)'
+        }}>
+          <div className="card animate-in" style={{
+            maxWidth: 400, width: '90%', padding: '2rem',
+            background: 'var(--bg-card)', border: '2px solid rgba(255,0,0,0.3)',
+            boxShadow: '0 10px 40px rgba(255,0,0,0.2)'
+          }}>
+            <div style={{ fontSize: '3rem', textAlign: 'center', marginBottom: '1rem' }}>🚨</div>
+            <h2 style={{ color: '#ff3333', textAlign: 'center', marginBottom: '1rem', fontWeight: 800 }}>Content Blocked</h2>
+            <p style={{ color: 'var(--text-primary)', textAlign: 'center', marginBottom: '1.5rem', lineHeight: 1.5, fontWeight: 500 }}>
+              {commentError}
+            </p>
+            <button className="btn-danger" style={{ width: '100%', padding: '0.8rem' }} onClick={() => setCommentError(null)}>
+              I Understand
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Post creation warning modal */}
       {postWarning && (

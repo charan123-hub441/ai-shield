@@ -1,12 +1,13 @@
 import os
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+import os
 
 import models
 from database import engine
-from routes import auth, messages, reports, moderation, analytics, posts, chat, calling, users
+from routes import auth, messages, reports, moderation, analytics, posts, chat, calling, users, reels
 
 # Create all tables on startup
 models.Base.metadata.create_all(bind=engine)
@@ -43,11 +44,32 @@ app.include_router(posts.router)
 app.include_router(chat.router)
 app.include_router(calling.router)
 app.include_router(users.router)
+app.include_router(reels.router)
 
 # Serve uploaded media files
-UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
+UPLOAD_DIR = os.path.join(os.getcwd(), "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+
+# --- Frontend Unification ---
+# 1. Mount the Vite 'dist' folder for static assets (js, css, images)
+FRONTEND_DIR = os.path.join(os.getcwd(), "frontend", "dist")
+if os.path.exists(FRONTEND_DIR):
+    app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIR, "assets")), name="assets")
+
+# 2. Catch-all route to serve the React index.html for any other route
+# This must be LAST so it doesn't intercept API calls
+@app.get("/{full_path:path}")
+async def serve_frontend(full_path: str):
+    # Skip if it's an API route (FastAPI handles those first, but just in case)
+    if full_path.startswith("api") or full_path.startswith("docs"):
+        return JSONResponse(status_code=404, content={"message": "Not Found"})
+    
+    index_file = os.path.join(FRONTEND_DIR, "index.html")
+    if os.path.exists(index_file):
+        return FileResponse(index_file)
+    
+    return JSONResponse(status_code=404, content={"message": "Frontend build not found. Run 'npm run build' first."})
 
 
 @app.get("/", tags=["health"])

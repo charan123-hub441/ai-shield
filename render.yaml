@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: ai-shield-fullstack
+    env: docker
+    plan: free
+    region: singapore # Change to your preferred region
+    envVars:
+      - key: PORT
+        value: 10000
+    autoDeploy: true
+
+# Note: This is a Blueprint for Render.com.
+# To use it:
+# 1. Push your code to GitHub.
+# 2. Go to Render.com -> New -> Blueprint.
+# 3. Select your repository.

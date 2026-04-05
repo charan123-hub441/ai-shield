@@ -19,7 +19,7 @@ export default function Login() {
       login(data.access_token, data.user);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Login failed. Please try again.');
+      setError(err.response?.data?.detail || 'Login failed. Please check your email and password.');
     } finally {
       setLoading(false);
     }
@@ -41,11 +41,6 @@ export default function Login() {
         borderRadius: '50%', background: 'radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 65%)',
         pointerEvents: 'none', filter: 'blur(40px)'
       }} />
-      <div style={{
-        position: 'fixed', top: '40%', right: '20%', width: '300px', height: '300px',
-        borderRadius: '50%', background: 'radial-gradient(circle, rgba(236,72,153,0.05) 0%, transparent 65%)',
-        pointerEvents: 'none', filter: 'blur(30px)'
-      }} />
 
       <div className="card animate-in" style={{ width: '100%', maxWidth: 420, padding: '2.5rem', position: 'relative', zIndex: 1 }}>
         {/* Header */}
@@ -60,7 +55,7 @@ export default function Login() {
           }}>POV</div>
           <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>Welcome back</h1>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '0.4rem' }}>
-            Sign in to your POV account
+            Sign in with your email and password
           </p>
         </div>
 

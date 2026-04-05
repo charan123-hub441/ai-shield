@@ -9,8 +9,12 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True, nullable=False)
-    email = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
+    email = Column(String, unique=True, index=True, nullable=True) # Now optional
+    hashed_password = Column(String, nullable=True)             # Now optional
+    phone_number = Column(String, unique=True, index=True, nullable=True)
+    otp_code = Column(String, nullable=True)
+    otp_expiry = Column(DateTime, nullable=True)
+    two_factor_enabled = Column(Boolean, default=False)
     role = Column(String, default="user")        # "user" | "admin"
     full_name = Column(String, nullable=True)
     bio = Column(Text, nullable=True)
@@ -146,4 +150,51 @@ class ChatMessage(Base):
 
     conversation = relationship("Conversation", back_populates="chat_messages")
     sender = relationship("User")
+
+
+# ─── Reels ────────────────────────────────────────────────────────────────────
+
+class Reel(Base):
+    __tablename__ = "reels"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    caption = Column(Text, default="")
+    video_url = Column(String, nullable=False)
+    thumbnail_url = Column(String, nullable=True)
+    view_count = Column(Integer, default=0)
+    is_flagged = Column(Boolean, default=False)
+    flag_label = Column(String, nullable=True)
+    flag_score = Column(Float, nullable=True)
+    flag_warning = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User")
+    likes = relationship("ReelLike", back_populates="reel", cascade="all, delete-orphan")
+    comments = relationship("ReelComment", back_populates="reel", cascade="all, delete-orphan")
+
+
+class ReelLike(Base):
+    __tablename__ = "reel_likes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    reel_id = Column(Integer, ForeignKey("reels.id"))
+    user_id = Column(Integer, ForeignKey("users.id"))
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    reel = relationship("Reel", back_populates="likes")
+    user = relationship("User")
+
+
+class ReelComment(Base):
+    __tablename__ = "reel_comments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    reel_id = Column(Integer, ForeignKey("reels.id"))
+    user_id = Column(Integer, ForeignKey("users.id"))
+    text = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    reel = relationship("Reel", back_populates="comments")
+    user = relationship("User")
 

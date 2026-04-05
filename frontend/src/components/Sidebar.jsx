@@ -4,12 +4,14 @@ import { useAuth } from '../context/AuthContext';
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: '📊' },
   { path: '/feed',      label: 'Feed',      icon: '📱' },
+  { path: '/reels',     label: 'Reels',     icon: '🎬' },
   { path: '/analyzer',  label: 'Analyzer',  icon: '🔍' },
   { path: '/chat',      label: 'Chat',      icon: '💬' },
   { path: '/call',      label: 'Call',       icon: '📞' },
-  { path: '/profile',    label: 'Profile',   icon: '👤' },
-  { path: '/moderation', label: 'Moderation', icon: '🛡️' },
+  { path: '/profile',   label: 'Profile',   icon: '👤' },
+  { path: '/moderation',label: 'Moderation',icon: '🛡️' },
   { path: '/reports',   label: 'Reports',   icon: '📋' },
+  { path: '/settings',  label: 'Settings',  icon: '⚙️' },
 ];
 
 export default function Sidebar({ theme, toggleTheme }) {

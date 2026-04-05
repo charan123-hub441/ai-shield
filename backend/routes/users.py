@@ -11,8 +11,9 @@ import schemas
 
 router = APIRouter(tags=["users"])
 
-UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "uploads")
+UPLOAD_DIR = os.path.join(os.getcwd(), "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+print(f"USERS ROUTE: Saving uploads to {UPLOAD_DIR}")
 
 @router.get("/users/me", response_model=schemas.UserProfileOut)
 def get_my_profile(
@@ -70,6 +71,7 @@ async def upload_profile_pic(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
+    print(f"UPLOAD REQUEST: User={current_user.username}, File={file.filename}")
     ext = os.path.splitext(file.filename)[1].lower()
     if ext not in [".jpg", ".jpeg", ".png", ".webp"]:
         raise HTTPException(400, "Invalid image format")
@@ -85,3 +87,25 @@ async def upload_profile_pic(
     db.commit()
     
     return {"url": url}
+
+@router.put("/users/me/password")
+def change_password(
+    payload: schemas.UserPasswordUpdate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    from auth import verify_password, hash_password
+    
+    # Verify current password
+    if not verify_password(payload.current_password, current_user.hashed_password):
+        raise HTTPException(status_code=400, detail="Incorrect current password")
+    
+    # Check if new password is the same as the old one
+    if verify_password(payload.new_password, current_user.hashed_password):
+        raise HTTPException(status_code=400, detail="New password cannot be the same as the current password")
+    
+    # Update password
+    current_user.hashed_password = hash_password(payload.new_password)
+    db.commit()
+    
+    return {"message": "Password updated successfully"}
