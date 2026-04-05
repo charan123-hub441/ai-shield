@@ -47,13 +47,14 @@ app.include_router(users.router)
 app.include_router(reels.router)
 
 # Serve uploaded media files
-UPLOAD_DIR = os.path.join(os.getcwd(), "uploads")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 # --- Frontend Unification ---
 # 1. Mount the Vite 'dist' folder for static assets (js, css, images)
-FRONTEND_DIR = os.path.join(os.getcwd(), "frontend", "dist")
+FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "frontend", "dist"))
 if os.path.exists(FRONTEND_DIR):
     app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIR, "assets")), name="assets")
 

@@ -27,6 +27,7 @@ COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app/backend
 ENV PORT=10000
 
 # Expose port and run

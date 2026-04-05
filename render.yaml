@@ -8,6 +8,7 @@ services:
       - key: PORT
         value: 10000
     autoDeploy: true
+    dockerfilePath: ./Dockerfile
 
 # Note: This is a Blueprint for Render.com.
 # To use it:
