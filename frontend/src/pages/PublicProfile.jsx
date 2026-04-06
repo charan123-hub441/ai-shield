@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import API from '../api/axios';
+import API, { BASE_URL } from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 
 export default function PublicProfile() {
@@ -66,7 +66,7 @@ export default function PublicProfile() {
             background: 'linear-gradient(135deg, var(--accent), #ec4899)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             color: 'white', fontWeight: 'bold', fontSize: '3rem',
-            backgroundImage: profile.profile_pic_url ? `url(http://127.0.0.1:8000${profile.profile_pic_url})` : 'none',
+            backgroundImage: profile.profile_pic_url ? `url(${BASE_URL}${profile.profile_pic_url})` : 'none',
             backgroundSize: 'cover', backgroundPosition: 'center',
             boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
         }}>

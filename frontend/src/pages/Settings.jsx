@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import API from '../api/axios';
+import API, { BASE_URL } from '../api/axios';
 import Navbar from '../components/Navbar';
 
 export default function Settings() {
@@ -132,7 +132,7 @@ function EditProfile() {
           overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center'
         }}>
           {user.profile_pic_url ? (
-            <img src={`http://127.0.0.1:8000${user.profile_pic_url}`} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={`${BASE_URL}${user.profile_pic_url}`} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
             <span style={{ fontSize: '2rem', fontWeight: 700, color: 'white' }}>U</span>
           )}

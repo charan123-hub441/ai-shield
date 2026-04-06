@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import API from '../api/axios';
+import API, { BASE_URL } from '../api/axios';
 
 export default function FollowRequests() {
   const [requests, setRequests] = useState([]);
@@ -60,7 +60,7 @@ export default function FollowRequests() {
                     background: 'linear-gradient(135deg, var(--accent), #ec4899)',
                     color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontWeight: 'bold', fontSize: '1.2rem',
-                    backgroundImage: req.follower_profile_pic_url ? `url(http://127.0.0.1:8000${req.follower_profile_pic_url})` : 'none',
+                    backgroundImage: req.follower_profile_pic_url ? `url(${BASE_URL}${req.follower_profile_pic_url})` : 'none',
                     backgroundSize: 'cover', backgroundPosition: 'center'
                   }}>
                     {!req.follower_profile_pic_url && req.follower_username[0].toUpperCase()}

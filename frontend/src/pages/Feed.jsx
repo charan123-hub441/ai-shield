@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import API from '../api/axios';
+import API, { BASE_URL } from '../api/axios';
 import Navbar from '../components/Navbar';
 
 export default function Feed() {
@@ -327,9 +327,9 @@ export default function Feed() {
               {post.media_url && (
                 <div style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '0.75rem', maxHeight: 400 }}>
                   {post.media_type === 'image' ? (
-                    <img src={`http://127.0.0.1:8000${post.media_url}`} alt="post" style={{ width: '100%', maxHeight: 400, objectFit: 'cover' }} />
+                    <img src={`${BASE_URL}${post.media_url}`} alt="post" style={{ width: '100%', maxHeight: 400, objectFit: 'cover' }} />
                   ) : (
-                    <video src={`http://127.0.0.1:8000${post.media_url}`} controls style={{ width: '100%', maxHeight: 400 }} />
+                    <video src={`${BASE_URL}${post.media_url}`} controls style={{ width: '100%', maxHeight: 400 }} />
                   )}
                 </div>
               )}

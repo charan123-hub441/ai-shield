@@ -2,8 +2,10 @@ import axios from 'axios';
 
 const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
+export const BASE_URL = isDev ? 'http://127.0.0.1:8000' : '';
+
 const API = axios.create({
-  baseURL: isDev ? 'http://127.0.0.1:8000' : '',
+  baseURL: BASE_URL,
 });
 
 // Attach JWT to every request

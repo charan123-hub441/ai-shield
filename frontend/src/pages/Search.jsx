@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import API from '../api/axios';
+import API, { BASE_URL } from '../api/axios';
 
 export default function Search() {
   const [query, setQuery] = useState('');
@@ -75,7 +75,7 @@ export default function Search() {
               background: 'linear-gradient(135deg, var(--accent), #ec4899)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: 'white', fontWeight: 'bold', fontSize: '1.2rem',
-              backgroundImage: user.profile_pic_url ? `url(http://127.0.0.1:8000${user.profile_pic_url})` : 'none',
+              backgroundImage: user.profile_pic_url ? `url(${BASE_URL}${user.profile_pic_url})` : 'none',
               backgroundSize: 'cover', backgroundPosition: 'center'
             }}>
               {!user.profile_pic_url && user.username[0].toUpperCase()}

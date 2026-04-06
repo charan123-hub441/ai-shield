@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
-import API from '../api/axios';
+import API, { BASE_URL } from '../api/axios';
 
-const BASE = 'http://127.0.0.1:8000';
+const BASE = BASE_URL;
 
 export default function Reels() {
   const [reels, setReels] = useState([]);

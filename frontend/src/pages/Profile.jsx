@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import API from '../api/axios';
+import API, { BASE_URL } from '../api/axios';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 
@@ -101,7 +101,7 @@ export default function Profile() {
                 overflow: 'hidden', position: 'relative'
               }}>
                 {profile?.profile_pic_url ? (
-                  <img src={`http://127.0.0.1:8000${profile.profile_pic_url}`} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={`${BASE_URL}${profile.profile_pic_url}`} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   <span style={{ fontSize: '48px', fontWeight: 800, color: 'var(--accent)' }}>
                     {profile?.username?.[0]?.toUpperCase()}
@@ -197,9 +197,9 @@ export default function Profile() {
               }}>
                 {post.media_url ? (
                   post.media_type === 'image' ? (
-                    <img src={`http://127.0.0.1:8000${post.media_url}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={`${BASE_URL}${post.media_url}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
-                    <video src={`http://127.0.0.1:8000${post.media_url}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <video src={`${BASE_URL}${post.media_url}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   )
                 ) : (
                   <div style={{ padding: '1rem', fontSize: '0.75rem', overflow: 'hidden', textOverflow: 'ellipsis' }}>

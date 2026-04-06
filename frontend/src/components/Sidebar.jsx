@@ -1,5 +1,7 @@
+import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import API from '../api/axios';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: '📊' },
@@ -19,6 +21,25 @@ const navItems = [
 export default function Sidebar({ theme, toggleTheme }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [requestCount, setRequestCount] = useState(0);
+
+  useEffect(() => {
+    if (user) {
+      const fetchRequests = async () => {
+        try {
+          const res = await API.get('/users/me/follow-requests');
+          setRequestCount(res.data.length);
+        } catch (err) {
+          console.error("Failed to fetch follow requests", err);
+        }
+      };
+      
+      fetchRequests();
+      // Poll every 30 seconds
+      const interval = setInterval(fetchRequests, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [user]);
 
   const handleLogout = () => {
     logout();
@@ -63,9 +84,28 @@ export default function Sidebar({ theme, toggleTheme }) {
             key={item.path}
             to={item.path}
             className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
+            style={{ position: 'relative' }}
           >
             <span>{item.icon}</span>
             <span>{item.label}</span>
+            {item.path === '/requests' && requestCount > 0 && (
+              <span style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'var(--danger)',
+                color: 'white',
+                fontSize: '0.65rem',
+                fontWeight: 700,
+                padding: '0.15rem 0.45rem',
+                borderRadius: '8px',
+                boxShadow: '0 2px 8px rgba(255,77,109,0.3)',
+                animation: 'pulse 2s infinite'
+              }}>
+                {requestCount}
+              </span>
+            )}
           </NavLink>
         ))}
       </nav>
