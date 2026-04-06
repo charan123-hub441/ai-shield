@@ -7,7 +7,7 @@ import os
 
 import models
 from database import engine
-from routes import auth, messages, reports, moderation, analytics, posts, chat, calling, users, reels
+from routes import auth, messages, reports, moderation, analytics, posts, chat, calling, users, reels, owner
 
 # Create all tables on startup
 models.Base.metadata.create_all(bind=engine)
@@ -45,6 +45,7 @@ app.include_router(chat.router)
 app.include_router(calling.router)
 app.include_router(users.router)
 app.include_router(reels.router)
+app.include_router(owner.router)
 
 # Serve uploaded media files - use DATA_DIR env var for persistent volume in production
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
