@@ -11,7 +11,10 @@ import schemas
 
 router = APIRouter(tags=["users"])
 
-UPLOAD_DIR = os.path.join(os.getcwd(), "uploads")
+# Use same DATA_DIR as main.py — critical for Render persistent volume
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.environ.get("DATA_DIR", BASE_DIR)
+UPLOAD_DIR = os.path.join(DATA_DIR, "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 print(f"USERS ROUTE: Saving uploads to {UPLOAD_DIR}")
 

@@ -15,14 +15,17 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// Auto-logout on 401
+// Auto-logout on 401 (unauthenticated) — NOT on 403 (banned/forbidden)
 API.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      localStorage.removeItem('ai_shield_token');
-      localStorage.removeItem('ai_shield_user');
-      window.location.href = '/login';
+      // Only redirect if we're not already on the login page
+      if (!window.location.pathname.includes('/login')) {
+        localStorage.removeItem('ai_shield_token');
+        localStorage.removeItem('ai_shield_user');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(err);
   }

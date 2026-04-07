@@ -54,12 +54,17 @@ export default function Profile() {
     fd.append('file', file);
     try {
       const { data } = await API.post('/users/me/profile-pic', fd);
-      setProfile({ ...profile, profile_pic_url: data.url });
-      login(localStorage.getItem('token'), { ...user, profile_pic_url: data.url });
+      setProfile(prev => ({ ...prev, profile_pic_url: data.url }));
+      // Use the correct storage key from AuthContext
+      const currentToken = localStorage.getItem('ai_shield_token');
+      login(currentToken, { ...user, profile_pic_url: data.url });
     } catch (err) {
-      alert('Failed to upload avatar');
+      console.error('Avatar upload error:', err.response?.data || err.message);
+      alert(err.response?.data?.detail || 'Failed to upload profile picture. Please try again.');
     } finally {
       setUploading(false);
+      // Reset file input so same file can be re-selected
+      if (fileRef.current) fileRef.current.value = '';
     }
   };
 
