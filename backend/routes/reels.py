@@ -182,17 +182,33 @@ def add_reel_comment(
         raise HTTPException(404, "Reel not found")
 
     ai_result = classify_text(payload.text)
+    label = ai_result.get("label", "Safe")
+    score = ai_result.get("score", 0.0)
+
+    # Block Severe Harassment & Cyberbullying — these count as strikes
     if ai_result["is_flagged"]:
         current_user.warn_count += 1
         db.commit()
-        
+
         if current_user.warn_count >= 3:
             current_user.is_banned = True
             db.commit()
-            raise HTTPException(400, "ACCOUNT BANNED: You have repeatedly posted offensive content. Your account is now disabled.")
-            
+            raise HTTPException(400, "🚫 ACCOUNT BANNED: You have repeatedly posted harmful content. Your account is now permanently disabled.")
+
         remaining = 3 - current_user.warn_count
-        raise HTTPException(400, f"⚠️ WARNING: Your comment contains offensive or bullying words and was blocked. You have {remaining} strike(s) left before a permanent ban.")
+        raise HTTPException(
+            400,
+            f"⚠️ WARNING: Your comment was blocked by AI Shield — it contains {label.lower()} content. "
+            f"You have {remaining} strike(s) left before a permanent ban."
+        )
+
+    # Block Offensive content too — softer notice, no strike
+    if label == "Offensive":
+        raise HTTPException(
+            400,
+            f"🛡️ AI Shield detected offensive language in your comment (confidence: {round(score*100)}%). "
+            f"Please keep the community respectful and try rewording your comment."
+        )
 
     comment = models.ReelComment(
         reel_id=reel_id,

@@ -14,6 +14,7 @@ export default function Reels() {
   const [uploading, setUploading] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [commentError, setCommentError] = useState(null);
+  const [commenting, setCommenting] = useState(false);
   const [mutedMap, setMutedMap] = useState({});
   const [likeAnimId, setLikeAnimId] = useState(null);
   const containerRef = useRef(null);
@@ -97,7 +98,8 @@ export default function Reels() {
   };
 
   const addComment = async (reelId) => {
-    if (!commentText.trim()) return;
+    if (!commentText.trim() || commenting) return;
+    setCommenting(true);
     try {
       const { data } = await API.post(`/reels/${reelId}/comment`, { text: commentText });
       setReels(prev => prev.map(r =>
@@ -110,6 +112,8 @@ export default function Reels() {
       if (err.response?.status === 400 && err.response.data?.detail) {
         setCommentError(err.response.data.detail);
       }
+    } finally {
+      setCommenting(false);
     }
   };
 
@@ -355,14 +359,29 @@ export default function Reels() {
                   value={commentText}
                   onChange={e => setCommentText(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && addComment(currentReel.id)}
-                  style={styles.commentInput}
+                  style={{ ...styles.commentInput, opacity: commenting ? 0.6 : 1 }}
+                  disabled={commenting}
                 />
                 <button
                   onClick={() => addComment(currentReel.id)}
-                  style={styles.commentSendBtn}
-                  disabled={!commentText.trim()}
+                  style={{
+                    ...styles.commentSendBtn,
+                    background: commenting
+                      ? 'linear-gradient(135deg, #f59e0b, #f97316)'
+                      : styles.commentSendBtn.background,
+                    minWidth: commenting ? 110 : undefined,
+                    fontSize: commenting ? '0.72rem' : undefined,
+                    gap: commenting ? '0.3rem' : undefined,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}
+                  disabled={!commentText.trim() || commenting}
                 >
-                  ➤
+                  {commenting ? (
+                    <>
+                      <span className="spinner" style={{ width: 12, height: 12, borderWidth: 2, marginRight: 4 }} />
+                      Analyzing...
+                    </>
+                  ) : '➤'}
                 </button>
               </div>
             </div>
