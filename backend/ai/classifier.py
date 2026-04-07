@@ -5,17 +5,22 @@ from typing import Dict, Any
 # ─── Keyword dictionaries ─────────────────────────────────────────────────────
 
 SEVERE_KEYWORDS = [
-    # Death threats / self-harm
+    # Direct kill/death threats
+    r"\bkill you\b", r"\bi will kill you\b", r"\bi('m| am) going to kill\b",
+    r"\bgonna kill (you|u|him|her|them)\b", r"\bima kill (you|u|him|her|them)\b",
+    r"\bwill kill (you|u|him|her|them)\b", r"\bkill ur\b",
     r"\bkill yourself\b", r"\bkys\b", r"\bgo die\b", r"\bkill ur ?self\b",
     r"\bdie in a fire\b", r"\bdeserve to die\b", r"\bi will kill\b",
-    r"\bshoot you\b", r"\bslaughter\b", r"\bkill you\b",
+    r"\bshoot you\b", r"\bslaughter\b",
     r"\bhang yourself\b", r"\bslit your\b", r"\bcut yourself\b",
     r"\bcommit suicide\b", r"\bget cancer\b", r"\bkill them\b",
     r"\bshould die\b", r"\bhope you die\b", r"\bdrink bleach\b",
     r"\bjump off\b", r"\bend your life\b", r"\bburn alive\b",
     r"\bstab you\b", r"\bbeat you up\b", r"\bsmash your\b",
     r"\bi('ll| will) murder\b", r"\brape\b", r"\bmolest\b",
-    r"\beterrorize\b", r"\bbomb\b.*\byou\b",
+    r"\bterrorize\b", r"\bbomb\b.*\byou\b",
+    # Variants / typos
+    r"i wil+ kil+ (you|u)\b", r"imma kill (you|u)\b",
 ]
 
 CYBERBULLYING_KEYWORDS = [

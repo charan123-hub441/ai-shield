@@ -181,12 +181,17 @@ def add_reel_comment(
     if not reel:
         raise HTTPException(404, "Reel not found")
 
-    ai_result = classify_text(payload.text)
-    label = ai_result.get("label", "Safe")
-    score = ai_result.get("score", 0.0)
+    try:
+        ai_result = classify_text(payload.text)
+        label = ai_result.get("label", "Safe")
+        score = ai_result.get("score", 0.0)
+        is_flagged = ai_result.get("is_flagged", False)
+    except Exception:
+        # If classifier fails for any reason, fail-closed and block the comment
+        raise HTTPException(400, "🛡️ AI Shield could not process your comment. Please try again.")
 
     # Block Severe Harassment & Cyberbullying — these count as strikes
-    if ai_result["is_flagged"]:
+    if is_flagged:
         current_user.warn_count += 1
         db.commit()
 
@@ -198,8 +203,8 @@ def add_reel_comment(
         remaining = 3 - current_user.warn_count
         raise HTTPException(
             400,
-            f"⚠️ WARNING: Your comment was blocked by AI Shield — it contains {label.lower()} content. "
-            f"You have {remaining} strike(s) left before a permanent ban."
+            f"🚨 BLOCKED by AI Shield: Your comment contains {label} — threats and harassment are not allowed. "
+            f"You have {remaining} warning(s) left before a permanent ban."
         )
 
     # Block Offensive content too — softer notice, no strike
