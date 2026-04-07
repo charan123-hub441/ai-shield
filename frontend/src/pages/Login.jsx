@@ -69,7 +69,7 @@ export default function Login() {
               className="input"
               placeholder="you@example.com"
               value={form.email}
-              onChange={e => setForm({ ...form, email: e.target.value })}
+              onChange={e => setForm({ ...form, email: e.target.value.trim() })}
               required
             />
           </div>
