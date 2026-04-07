@@ -4,11 +4,12 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.environ.get("DATA_DIR", BASE_DIR)
 
-# Use DATABASE_URL env var if set (production volume), else fallback to local pov.db
+# Use DATABASE_URL env var if set (production volume), else fallback to local pov.db in DATA_DIR
 DATABASE_URL = os.environ.get(
     "DATABASE_URL",
-    f"sqlite:///{os.path.join(BASE_DIR, 'pov.db')}"
+    f"sqlite:///{os.path.join(DATA_DIR, 'pov.db')}"
 )
 
 # SQLite needs check_same_thread=False; PostgreSQL doesn't need it
