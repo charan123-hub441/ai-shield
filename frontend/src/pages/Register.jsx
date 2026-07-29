@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 
 export default function Register() {
@@ -7,24 +8,37 @@ export default function Register() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const { user, login } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     if (form.password !== form.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
     setLoading(true);
     try {
-      await API.post('/register', {
-        username: form.username,
-        email: form.email,
+      const { data } = await API.post('/register', {
+        username: form.username.trim(),
+        email: form.email.trim(),
         password: form.password
       });
-      setSuccess('Account created! Redirecting to login…');
-      setTimeout(() => navigate('/login'), 1500);
+      if (data.access_token && data.user) {
+        login(data.access_token, data.user);
+        navigate('/dashboard');
+      } else {
+        setSuccess('Account created! Redirecting to login…');
+        setTimeout(() => navigate('/login'), 1500);
+      }
     } catch (err) {
       setError(err.response?.data?.detail || 'Registration failed');
     } finally {

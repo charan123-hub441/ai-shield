@@ -35,7 +35,6 @@ export default function Sidebar({ theme, toggleTheme }) {
       };
       
       fetchRequests();
-      // Poll every 30 seconds
       const interval = setInterval(fetchRequests, 30000);
       return () => clearInterval(interval);
     }
@@ -48,37 +47,39 @@ export default function Sidebar({ theme, toggleTheme }) {
 
   return (
     <aside className="sidebar">
-      {/* Logo */}
-      <div style={{ marginBottom: '2.5rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', marginBottom: '0.3rem' }}>
+      {/* Brand Header */}
+      <div style={{ marginBottom: '2.2rem', paddingLeft: '0.2rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.2rem' }}>
           <div style={{
-            width: 40, height: 40, borderRadius: '12px',
-            background: 'linear-gradient(135deg, #6c63ff, #a855f7, #ec4899)',
+            width: 42, height: 42, borderRadius: '12px',
+            background: 'var(--gradient-primary)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '18px', fontWeight: 900, color: 'white',
-            boxShadow: '0 4px 15px rgba(108,99,255,0.35)',
+            fontSize: '20px', fontWeight: 900, color: '#ffffff',
+            boxShadow: 'var(--glow)',
             letterSpacing: '-0.5px'
           }}>
-            <span style={{ fontSize: '16px', fontWeight: 900 }}>P</span>
+            🛡️
           </div>
           <div>
-            <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
-              POV
-            </span>
-            <span style={{
-              fontSize: '0.6rem', fontWeight: 600, color: 'var(--accent)',
-              marginLeft: '0.4rem', padding: '0.1rem 0.35rem', borderRadius: '4px',
-              background: 'rgba(108,99,255,0.12)', verticalAlign: 'super'
-            }}>PRO</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <span style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
+                POV
+              </span>
+              <span style={{
+                fontSize: '0.62rem', fontWeight: 700, color: 'var(--accent)',
+                padding: '0.15rem 0.4rem', borderRadius: '6px',
+                background: 'var(--accent-light)', border: '1px solid rgba(99,102,241,0.2)'
+              }}>ENTERPRISE</span>
+            </div>
+            <p style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.02em', marginTop: '1px' }}>
+              Social Protection Platform
+            </p>
           </div>
         </div>
-        <p style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', paddingLeft: '0.15rem', letterSpacing: '0.3px' }}>
-          Social Media Protection
-        </p>
       </div>
 
-      {/* Nav */}
-      <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+      {/* Navigation */}
+      <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem', overflowY: 'auto' }}>
         {navItems.map(item => (
           <NavLink
             key={item.path}
@@ -86,22 +87,17 @@ export default function Sidebar({ theme, toggleTheme }) {
             className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
             style={{ position: 'relative' }}
           >
-            <span>{item.icon}</span>
-            <span>{item.label}</span>
+            <span style={{ fontSize: '1.1rem', width: 22, textAlign: 'center' }}>{item.icon}</span>
+            <span style={{ flex: 1 }}>{item.label}</span>
             {item.path === '/requests' && requestCount > 0 && (
               <span style={{
-                position: 'absolute',
-                right: '12px',
-                top: '50%',
-                transform: 'translateY(-50%)',
                 background: 'var(--danger)',
-                color: 'white',
-                fontSize: '0.65rem',
-                fontWeight: 700,
-                padding: '0.15rem 0.45rem',
-                borderRadius: '8px',
-                boxShadow: '0 2px 8px rgba(255,77,109,0.3)',
-                animation: 'pulse 2s infinite'
+                color: '#ffffff',
+                fontSize: '0.68rem',
+                fontWeight: 800,
+                padding: '0.15rem 0.5rem',
+                borderRadius: '999px',
+                boxShadow: '0 2px 8px rgba(239,68,68,0.4)'
               }}>
                 {requestCount}
               </span>
@@ -110,43 +106,44 @@ export default function Sidebar({ theme, toggleTheme }) {
         ))}
       </nav>
 
-      {/* Bottom */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '1rem' }}>
+      {/* Bottom Controls */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1.2rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
         {/* Theme toggle */}
-        <button className="nav-item" onClick={toggleTheme}>
-          <span>{theme === 'dark' ? '☀️' : '🌙'}</span>
+        <button className="nav-item" onClick={toggleTheme} style={{ justifyContent: 'flex-start' }}>
+          <span style={{ fontSize: '1.1rem' }}>{theme === 'dark' ? '☀️' : '🌙'}</span>
           <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
         </button>
 
-        {/* User info */}
+        {/* User Card */}
         <div style={{
-          padding: '0.75rem',
-          background: 'linear-gradient(135deg, rgba(108,99,255,0.08), rgba(168,85,247,0.06))',
+          padding: '0.75rem 0.85rem',
+          background: 'var(--accent-light)',
           borderRadius: '12px',
-          border: '1px solid rgba(108,99,255,0.12)',
-          display: 'flex', alignItems: 'center', gap: '0.6rem'
+          border: '1px solid rgba(99,102,241,0.18)',
+          display: 'flex', alignItems: 'center', gap: '0.75rem'
         }}>
           <div style={{
-            width: 32, height: 32, borderRadius: '8px',
-            background: 'linear-gradient(135deg, #6c63ff, #a855f7)',
+            width: 36, height: 36, borderRadius: '10px',
+            background: 'var(--gradient-primary)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '13px', fontWeight: 700, color: 'white', flexShrink: 0
+            fontSize: '14px', fontWeight: 800, color: '#ffffff', flexShrink: 0,
+            boxShadow: '0 2px 8px rgba(99,102,241,0.3)'
           }}>
             {user?.username?.[0]?.toUpperCase() || 'U'}
           </div>
-          <div style={{ overflow: 'hidden' }}>
-            <p style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
+          <div style={{ overflow: 'hidden', flex: 1 }}>
+            <p style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
               {user?.username}
             </p>
-            <p style={{ fontSize: '0.68rem', color: 'var(--accent)', textTransform: 'capitalize' }}>
-              {user?.role}
+            <p style={{ fontSize: '0.7rem', color: 'var(--accent)', fontWeight: 600, textTransform: 'capitalize' }}>
+              {user?.role || 'User'}
             </p>
           </div>
         </div>
 
-        <button className="nav-item" onClick={handleLogout} style={{ color: 'var(--danger)' }}>
-          <span>🚪</span>
-          <span>Log Out</span>
+        <button className="nav-item" onClick={handleLogout} style={{ color: 'var(--danger)', marginTop: '0.2rem' }}>
+          <span style={{ fontSize: '1.1rem' }}>🚪</span>
+          <span style={{ fontWeight: 600 }}>Log Out</span>
         </button>
       </div>
     </aside>

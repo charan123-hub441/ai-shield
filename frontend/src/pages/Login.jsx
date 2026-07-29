@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
@@ -7,19 +7,28 @@ export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { user, login } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      const { data } = await API.post('/login', form);
+      const { data } = await API.post('/login', {
+        email: form.email.trim(),
+        password: form.password
+      });
       login(data.access_token, data.user);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Login failed. Please check your email and password.');
+      setError(err.response?.data?.detail || 'Login failed. Please check your username/email and password.');
     } finally {
       setLoading(false);
     }
@@ -55,7 +64,7 @@ export default function Login() {
           }}>POV</div>
           <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>Welcome back</h1>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '0.4rem' }}>
-            Sign in with your email and password
+            Sign in with your email or username
           </p>
         </div>
 
@@ -63,13 +72,13 @@ export default function Login() {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">Email address</label>
+            <label className="form-label">Email address or Username</label>
             <input
-              type="email"
+              type="text"
               className="input"
-              placeholder="you@example.com"
+              placeholder="you@example.com or username"
               value={form.email}
-              onChange={e => setForm({ ...form, email: e.target.value.trim() })}
+              onChange={e => setForm({ ...form, email: e.target.value })}
               required
             />
           </div>

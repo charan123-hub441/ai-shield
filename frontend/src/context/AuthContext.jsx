@@ -11,8 +11,13 @@ export function AuthProvider({ children }) {
     const savedToken = localStorage.getItem('ai_shield_token');
     const savedUser = localStorage.getItem('ai_shield_user');
     if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
+      try {
+        setToken(savedToken);
+        setUser(JSON.parse(savedUser));
+      } catch (e) {
+        localStorage.removeItem('ai_shield_token');
+        localStorage.removeItem('ai_shield_user');
+      }
     }
     setLoading(false);
   }, []);
