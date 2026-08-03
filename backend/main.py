@@ -34,6 +34,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/health", tags=["health"])
+def health():
+    return {"status": "ok"}
+
+
+@app.get("/api/info", tags=["health"])
+def api_info():
+    return {
+        "service": "POV API",
+        "status": "running",
+        "version": "2.0.0"
+    }
+
+
 # Register routers
 app.include_router(auth.router)
 app.include_router(messages.router)
@@ -47,7 +61,7 @@ app.include_router(users.router)
 app.include_router(reels.router)
 app.include_router(owner.router)
 
-# Serve uploaded media files - use DATA_DIR env var for persistent volume in production
+# Serve uploaded media files
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.environ.get("DATA_DIR", BASE_DIR)
 UPLOAD_DIR = os.path.join(DATA_DIR, "uploads")
@@ -55,35 +69,27 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 # --- Frontend Unification ---
-# 1. Mount the Vite 'dist' folder for static assets (js, css, images)
 FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "frontend", "dist"))
-if os.path.exists(FRONTEND_DIR):
+if os.path.exists(os.path.join(FRONTEND_DIR, "assets")):
     app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIR, "assets")), name="assets")
 
-# 2. Catch-all route to serve the React index.html for any other route
-# This must be LAST so it doesn't intercept API calls
+# Catch-all route to serve the React index.html or dist files for SPA routing
+# This MUST be the last handler in main.py
 @app.get("/{full_path:path}")
 async def serve_frontend(full_path: str):
-    # Skip if it's an API route (FastAPI handles those first, but just in case)
-    if full_path.startswith("api") or full_path.startswith("docs"):
+    # Exclude system API, Swagger docs, and schema paths
+    if full_path in ["docs", "redoc", "openapi.json"] or full_path.startswith("api/"):
         return JSONResponse(status_code=404, content={"message": "Not Found"})
     
+    # Check if a static file exists in frontend/dist (e.g. favicon.svg)
+    requested_file = os.path.join(FRONTEND_DIR, full_path)
+    if full_path and os.path.isfile(requested_file):
+        return FileResponse(requested_file)
+
+    # Fallback to index.html for client-side React routes
     index_file = os.path.join(FRONTEND_DIR, "index.html")
     if os.path.exists(index_file):
         return FileResponse(index_file)
     
-    return JSONResponse(status_code=404, content={"message": "Frontend build not found. Run 'npm run build' first."})
+    return JSONResponse(status_code=404, content={"message": "Frontend build not found."})
 
-
-@app.get("/", tags=["health"])
-def root():
-    return {
-        "service": "AI Shield",
-        "status": "running",
-        "docs": "/docs"
-    }
-
-
-@app.get("/health", tags=["health"])
-def health():
-    return {"status": "ok"}
